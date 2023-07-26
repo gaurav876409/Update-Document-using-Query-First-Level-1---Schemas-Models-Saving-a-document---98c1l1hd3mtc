@@ -37,12 +37,25 @@ const updateProduct = async (req, res) => {
         const { updatedData } = req.body;
 
         //Write your code here
+        const { id } = req.params;
+
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: id },
+            updatedData,
+            { new: true } // Return the updated document instead of the original one
+          );
+          if (!updatedProduct) {
+            return res.status(404).json({
+              message: "Product Not Found",
+              status: "Error"
+            });
+          }
 
         res.status(200).json({
             status: "success",
             message: "Product Updated Successfully",
             data: {
-                // updatedProduct:  < put updated product object here > ,
+                updatedProduct
             },
         });
     } catch (err) {
@@ -59,6 +72,8 @@ const updateProduct = async (req, res) => {
 const getProductByID = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
+        console.log(req.params.id)
+        console.log(product)
         if (!product) {
             return res.status(404).json({
                 status: "Error",
